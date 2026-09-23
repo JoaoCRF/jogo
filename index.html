@@ -1,0 +1,173 @@
+<!--
+  Draft do Craque — Carreira de Jogador
+  index.html: estrutura · style.css: estilos · script.js: lógica do jogo
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DRAFT DO CRAQUE — Carreira de Jogador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand"><span class="ball">⚽</span><h1>DRAFT DO <span>CRAQUE</span></h1></div>
+    <div class="topbar-meta" id="topbarMeta"></div>
+  </div>
+
+  <!-- SCREEN: CREATE -->
+  <section id="screen-create" class="screen">
+    <div class="panel">
+      <p class="section-label">Novo craque</p>
+      <h2 class="screen-title">Crie seu jogador</h2>
+      <p class="screen-sub">Defina a identidade do seu atleta. Os atributos técnicos você vai construir na sala de draft, herdando status de lendas e craques reais.</p>
+
+      <div class="field">
+        <label class="field-label">Nome do jogador</label>
+        <input type="text" id="inpName" placeholder="Ex: Kaique Silva" maxlength="24">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Nacionalidade</label>
+        <div class="chip-group" id="chipNationality"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Posição</label>
+        <div class="chip-group" id="chipPosition"></div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Altura (cm)</label>
+          <input type="number" id="inpHeight" value="180" min="155" max="205">
+        </div>
+        <div class="field">
+          <label class="field-label">Peso (kg)</label>
+          <input type="number" id="inpWeight" value="75" min="55" max="100">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" id="btnGoDraft">Ir para o Draft →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: DRAFT -->
+  <section id="screen-draft" class="screen hidden">
+    <div class="panel">
+      <div class="flex-between">
+        <div>
+          <p class="section-label">Sala de Draft</p>
+          <h2 class="screen-title" style="font-size:28px;">Rodada <span id="draftRoundNum">1</span> de 8</h2>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btnReroll">🔁 Reroll (<span id="rerollCount">1</span> disponível)</button>
+      </div>
+      <div class="draft-progress" id="draftProgress"></div>
+
+      <div class="draft-stage">
+        <div class="card-wrap"><div id="draftCard"></div></div>
+        <div>
+          <p class="section-label">Escolha 1 atributo desta carta</p>
+          <div class="attr-choices" id="attrChoices"></div>
+          <p class="draft-side-note" id="draftSideNote">Ao escolher um atributo, seu jogador herda esse valor exato. Atributos já preenchidos não podem ser escolhidos novamente.</p>
+          <div class="draft-taken-list" id="draftTakenList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: DRAFT SUMMARY -->
+  <section id="screen-draftsummary" class="screen hidden">
+    <div class="panel" id="draftSummaryPanel"></div>
+  </section>
+
+  <!-- SCREEN: CAREER -->
+  <section id="screen-career" class="screen hidden">
+    <div class="career-grid">
+      <div>
+        <div class="panel player-mini" id="playerMiniWrap"></div>
+        <div class="panel" id="newsPanel">
+          <p class="section-label">Últimas notícias</p>
+          <div class="news-feed" id="newsFeed"></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="tabs" id="careerTabs"></div>
+          <div id="careerTabContent"></div>
+        </div>
+        <div class="panel">
+          <p class="section-label">Ações</p>
+          <div id="marketPendingBanner" class="hidden" style="background:var(--panel-3);border:1px solid var(--gold);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+            <p style="margin:0 0 4px;font-size:13.5px;color:var(--gold-light);font-weight:700;">📋 Temporada encerrada!</p>
+            <p style="margin:0;font-size:12.5px;color:var(--chalk-dim);">Dá uma olhada na tabela, nas chaves e nas notícias antes de seguir pro mercado.</p>
+          </div>
+          <div class="btn-row" style="margin-top:0;" id="actionsNormal">
+            <button class="btn btn-primary" id="btnNextMatch">⏭ Avançar Jogo</button>
+            <button class="btn btn-ghost" id="btnSimSeason">▶ Simular Temporada</button>
+            <button class="btn btn-gold" id="btnSimCareer">⏩ Simular até o Fim da Carreira</button>
+            <button class="btn btn-ghost" id="btnRetire">🏳 Encerrar Carreira</button>
+          </div>
+          <div class="btn-row hidden" style="margin-top:0;" id="actionsMarketPending">
+            <button class="btn btn-gold" id="btnOpenMarket">🏪 Abrir Mercado de Transferências →</button>
+            <button class="btn btn-ghost" id="btnRetireFromSummary">🏳 Encerrar Carreira</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: MATCH -->
+  <section id="screen-match" class="screen hidden">
+    <div class="panel">
+      <div class="scoreboard">
+        <div class="sb-competition" id="mCompName"></div>
+        <div class="sb-teams">
+          <div class="sb-team left" id="mTeamA"></div>
+          <div class="sb-score" id="mScore">0 – 0</div>
+          <div class="sb-team right" id="mTeamB"></div>
+        </div>
+        <div class="sb-minute live" id="mMinute">0'</div>
+        <div class="sb-log" id="mLog"></div>
+      </div>
+      <div class="btn-row" id="mSkipRow" style="justify-content:center;">
+        <button class="btn btn-ghost btn-sm" id="btnSkipMatch">⏭ Pular para o Resultado</button>
+      </div>
+      <div id="mDecisionBox"></div>
+      <div id="mPenaltyBox"></div>
+      <div id="mResultBox"></div>
+    </div>
+  </section>
+
+  <!-- SCREEN: MARKET -->
+  <section id="screen-market" class="screen hidden">
+    <div class="panel">
+      <p class="section-label">Mercado da bola</p>
+      <h2 class="screen-title" style="font-size:28px;">Propostas recebidas</h2>
+      <div id="marketOffers"></div>
+      <div class="btn-row">
+        <button class="btn btn-ghost btn-block" id="btnSkipMarket">Permanecer no clube atual</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: RETIRED -->
+  <section id="screen-retired" class="screen hidden">
+    <div class="panel hall-of-fame" id="retiredPanel"></div>
+  </section>
+
+</div>
+
+<div id="modalRoot"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
